@@ -1,0 +1,9 @@
+---
+
+- name: Install Nginx from package
+  hosts: default
+
+  roles:
+    - { name: geerlingguy.nginx,
+        become: true,
+      }

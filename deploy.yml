@@ -1,0 +1,13 @@
+---
+
+- name: Deploy sample app to 'remote host'
+  hosts: default
+
+  vars:
+    - app_name: app
+
+  tasks:
+    - name: Copy app
+      copy:
+        dest: '{{ app_name }}'
+        src: sendfile_test

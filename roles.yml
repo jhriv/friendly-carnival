@@ -1,0 +1,7 @@
+---
+
+- name: geerlingguy.nginx
+  version: 2.6.0
+
+- name: zzet.rbenv
+  version: 3.4.0

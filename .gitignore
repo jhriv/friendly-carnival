@@ -6,3 +6,4 @@
 GUESTS.rb
 Vagrantfile
 ansible.cfg
+roles/

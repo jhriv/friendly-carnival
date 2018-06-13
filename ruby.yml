@@ -1,0 +1,30 @@
+---
+
+- name: Install Ruby
+  hosts: default
+
+  vars:
+    # ideally, this is read from .ruby-version of the app itself
+    ruby_version: 2.3.6
+    rbenv:
+      env: user
+      version: v1.1.1
+      default_ruby: '{{ ruby_version }}'
+      rubies:
+        - version: '{{ ruby_version }}'
+    rbenv_users:
+      - '{{ ansible_user_id }}'
+    rbenv_apt_packages:
+      - build-essential
+      - git
+      - libcurl4-openssl-dev
+      - libffi-dev
+      - libreadline-dev
+      - libssl1.0-dev
+      - libxml2-dev
+      - libxslt1-dev
+      - openssl1.0
+      - zlib1g-dev
+
+  roles:
+    - { name: zzet.rbenv }

@@ -19,6 +19,7 @@ GUESTS = [
   {
     name: 'default',
     box: 'ubuntu/bionic64',
+    memory: 2048,
     needs_python: true,
     #ports: [ 8088 ],
     sync: true,
