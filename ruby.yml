@@ -29,3 +29,17 @@
 
   roles:
     - { name: zzet.rbenv }
+
+  tasks:
+    - name: Read the requisite rbenv source block
+      command: cat /etc/profile.d/rbenv.sh
+      register: rbenv_bash
+      changed_when: false
+
+    - name: Prepend rbenv block to .bashrc
+      blockinfile:
+        path: .bashrc
+        block: '{{ rbenv_bash.stdout }}'
+        insertbefore: BOF
+        state: present
+        marker: '# {mark} ANSIBLE MANAGED BLOCK // rbenv'
