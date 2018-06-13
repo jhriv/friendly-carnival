@@ -7,3 +7,6 @@ GUESTS.rb
 Vagrantfile
 ansible.cfg
 roles/
+
+# something about the apt module creates this directory:
+~None/
