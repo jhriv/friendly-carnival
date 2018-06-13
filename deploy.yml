@@ -4,10 +4,45 @@
   hosts: default
 
   vars:
-    - app_name: app
+    install_directory: app
+    app_name: sendfile_test
+    gem_dependecies:
+      - libsqlite3-dev
+    runtime_dependecies:
+      - nodejs
 
   tasks:
     - name: Copy app
-      copy:
-        dest: '{{ app_name }}'
-        src: sendfile_test
+      # synchronize module doesn't work well with Vagrant;
+      # ansible.cfg has our back
+      synchronize:
+        dest: '{{ install_directory }}'
+        src: '{{ app_name }}'
+        use_ssh_args: true
+      # The timestamp on db/schema.rb changes; ignore that.
+      changed_when: sync_result.msg != '' and sync_result.msg != '<f..t.... sendfile_test/db/schema.rb\n'
+      register: sync_result
+
+    - name: Instal gem build and runtime dependecies
+      apt:
+        name: '{{ item }}'
+        state: present
+      become: true
+      with_items:
+        - '{{ gem_dependecies }}'
+        - '{{ runtime_dependecies }}'
+
+    - name: Install gems
+      bundler:
+        chdir: '{{ install_directory }}/{{ app_name }}'
+        deployment_mode: true
+        state: present
+
+    - name: Migrate the database
+      command: bin/rake db:migrate
+      args:
+        chdir: '{{ install_directory }}/{{ app_name }}'
+      environment:
+        RAILS_ENV: development
+      register: out
+      changed_when: out.stdout != ''
