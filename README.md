@@ -9,6 +9,7 @@ tl;dr:
   git clone --recurse-submodules https://github.com/jhriv/friendly-carnival.git
   cd friendly-carnival
   make all
+  ansible-playbook site.yml
 ```
 
 Friendly

@@ -1,0 +1,5 @@
+---
+
+- import_playbook: nginx.yml
+- import_playbook: ruby.yml
+- import_playbook: deploy.yml
