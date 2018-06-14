@@ -10,6 +10,7 @@
       - libsqlite3-dev
     runtime_dependecies:
       - nodejs
+    local_datastore: files
 
   tasks:
     - name: Copy app
@@ -30,6 +31,9 @@
         - Install gem build and runtime dependecies
         - Install gems
         - Load the database
+        - Create local filestore
+        - Copy files to local storage
+        - Set up datastore symlinks
 
   handlers:
 
@@ -56,3 +60,22 @@
         RAILS_ENV: development
       register: out
       changed_when: out.stdout != ''
+
+    - name: Create local filestore
+      file:
+        dest: '{{ local_datastore }}'
+        state: directory
+
+    - name: Copy files to local storage
+      copy:
+        dest: '/home/vagrant/{{ local_datastore }}'
+        src: '{{ install_directory }}/{{ app_name }}/{{ item }}'
+        remote_src: true
+      with_items:
+        - squirrel.jpeg
+
+    - name: Set up datastore symlinks
+      file:
+        dest: '{{ install_directory }}/{{ app_name }}/private'
+        src: '/home/vagrant/{{ local_datastore }}'
+        state: link
