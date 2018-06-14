@@ -15,6 +15,11 @@
             proxy_set_header X-Real-IP  $remote_addr;
             proxy_set_header Host $http_host;
             proxy_set_header X-NginX-Proxy true;
+            proxy_set_header X-Accel-Mapping /home/vagrant/app/sendfile_test/private/=/private/;
+          }
+          location /private/ {
+            alias /home/vagrant/files/;
+            internal;
           }
 
   roles:
