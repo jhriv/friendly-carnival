@@ -3,6 +3,20 @@
 - name: Install Nginx from package
   hosts: default
 
+  vars:
+    nginx_vhosts:
+      - listen: "8000 default_server"
+        server_name: "squirrel.ucsd.edu"
+        #root: /home/vagrant/app/sendfile_test/public/
+        extra_parameters: |
+          location / {
+            proxy_pass http://127.0.0.1:3000;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP  $remote_addr;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-NginX-Proxy true;
+          }
+
   roles:
     - { name: geerlingguy.nginx,
         become: true,

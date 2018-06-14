@@ -21,7 +21,7 @@ GUESTS = [
     box: 'ubuntu/bionic64',
     memory: 2048,
     needs_python: true,
-    ports: [ 3000 ],
+    ports: [ 3000, 8000 ],
     sync: true,
     update: true,
   },
