@@ -10,6 +10,7 @@ tl;dr:
   cd friendly-carnival
   make all
   ansible-playbook site.yml
+  ansible-playbook run-server.yml
 ```
 
 Friendly

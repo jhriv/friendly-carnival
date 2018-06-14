@@ -18,7 +18,7 @@
     rbenv_apt_packages:
       - build-essential
       - git
-      - libcurl4-openssl-dev
+      - libcurl-openssl1.0-dev
       - libffi-dev
       - libreadline-dev
       - libssl1.0-dev
@@ -26,9 +26,20 @@
       - libxslt1-dev
       - openssl1.0
       - zlib1g-dev
+    rbenv_apt_package_conflicts:
+      - curl
 
   roles:
     - { name: zzet.rbenv }
+
+  pre_tasks:
+    - name: Remove conflicting packages
+      apt:
+        name: '{{ item }}'
+        state: absent
+      become: true
+      with_items:
+        - '{{ rbenv_apt_package_conflicts }}'
 
   tasks:
     - name: Read the requisite rbenv source block
