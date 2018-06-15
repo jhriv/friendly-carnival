@@ -13,6 +13,9 @@ tl;dr:
   ansible-playbook run-server.yml
 ```
 
+Did you clone without the submodules?
+`git submodule update --init --recursive`
+
 Friendly
 --------
 
