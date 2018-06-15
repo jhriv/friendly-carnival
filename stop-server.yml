@@ -1,0 +1,17 @@
+---
+
+- name: Stop app
+  hosts: default
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Get running server PID
+      command: cat server.pid
+      args:
+        chdir: '{{ install_directory }}/{{ app_name }}/tmp/pids'
+      register: pid
+
+    - name: Stop service (SIGHUP)
+      command: kill --signal=SIGHUP '{{ pid.stdout }}'

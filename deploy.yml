@@ -3,16 +3,30 @@
 - name: Deploy sample app to 'remote host'
   hosts: default
 
-  vars:
-    install_directory: app
-    app_name: sendfile_test
-    gem_dependecies:
-      - libsqlite3-dev
-    runtime_dependecies:
-      - nodejs
-    local_datastore: files
+  vars_files:
+    - vars.yml
 
   tasks:
+    - name: Get current time, for rollbacks
+      set_fact:
+        timestamp: '{{ ansible_date_time.iso8601_basic }}'
+
+    - name: Make versioned deploy directory
+      file:
+        path: '{{ install_directory }}-{{ timestamp }}'
+        state: directory
+
+    - name: Remove old 'current' symlink
+      file:
+        path: '{{ install_directory }}'
+        state: absent
+
+    - name: Make 'current' symlink
+      file:
+        path: '{{ install_directory }}'
+        src: '{{ install_directory }}-{{ timestamp }}'
+        state: link
+
     - name: Copy app
       # synchronize module doesn't work well with Vagrant;
       # ansible.cfg has our back
@@ -30,7 +44,7 @@
       notify:
         - Install gem build and runtime dependecies
         - Install gems
-        - Load the database
+        - Migrate the database
         - Create local filestore
         - Copy files to local storage
         - Set up datastore symlinks
@@ -49,11 +63,11 @@
     - name: Install gems
       bundler:
         chdir: '{{ install_directory }}/{{ app_name }}'
-        deployment_mode: true
+        deployment_mode: '{{ deploy | default(false) }}'
         state: present
 
-    - name: Load the database
-      command: bin/rake db:schema:load
+    - name: Migrate the database
+      command: bin/rake db:migrate
       args:
         chdir: '{{ install_directory }}/{{ app_name }}'
       environment:
@@ -68,7 +82,7 @@
 
     - name: Copy files to local storage
       copy:
-        dest: '/home/vagrant/{{ local_datastore }}'
+        dest: '{{ local_datastore }}'
         src: '{{ install_directory }}/{{ app_name }}/{{ item }}'
         remote_src: true
       with_items:
@@ -77,5 +91,5 @@
     - name: Set up datastore symlinks
       file:
         dest: '{{ install_directory }}/{{ app_name }}/private'
-        src: '/home/vagrant/{{ local_datastore }}'
+        src: '{{ local_datastore }}'
         state: link

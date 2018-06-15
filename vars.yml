@@ -1,0 +1,51 @@
+---
+
+install_directory: '{{ ansible_user_dir }}/app'
+app_name: sendfile_test
+gem_dependecies:
+  - libsqlite3-dev
+runtime_dependecies:
+  - nodejs
+local_datastore: '{{ ansible_user_dir }}/files'
+
+nginx_vhosts:
+  - listen: "8000 default_server"
+    server_name: "squirrel.ucsd.edu"
+    extra_parameters: |
+      location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_set_header X-Accel-Mapping {{ install_directory | dirname }}/=/private/;
+      }
+      location /private/ {
+        alias {{ install_directory | dirname }}/;
+        internal;
+      }
+
+# ideally, this is read from .ruby-version of the app itself
+ruby_version: 2.3.6
+rbenv:
+  env: user
+  version: v1.1.1
+  default_ruby: '{{ ruby_version }}'
+  rubies:
+    - version: '{{ ruby_version }}'
+rbenv_users:
+  - '{{ ansible_user_id }}'
+# ancient Rubies require openssl1.0
+rbenv_apt_packages:
+  - build-essential
+  - git
+  - libcurl-openssl1.0-dev
+  - libffi-dev
+  - libreadline-dev
+  - libssl1.0-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - openssl1.0
+  - zlib1g-dev
+rbenv_apt_package_conflicts:
+  - curl
