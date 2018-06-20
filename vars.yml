@@ -49,3 +49,22 @@ rbenv_apt_packages:
   - zlib1g-dev
 rbenv_apt_package_conflicts:
   - curl
+
+# apache things
+apache_listen_port: 8088
+apache_mods_enabled:
+  - proxy.load
+  - proxy_http.load
+
+vhosts:
+  default:
+    - servername: default
+      extra_parameters: |
+        ProxyPass / http://localhost:8000/
+          ProxyPassReverse / http://localhost:8000/
+
+  frontend:
+    - servername: frontend
+      extra_parameters: |
+        ProxyPass / http://default:{{apache_listen_port}}/
+          ProxyPassReverse / http://default:{{apache_listen_port}}/

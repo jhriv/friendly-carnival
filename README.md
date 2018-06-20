@@ -8,7 +8,7 @@ tl;dr:
 ``` sh
   git clone --recurse-submodules https://github.com/jhriv/friendly-carnival.git
   cd friendly-carnival
-  make all
+  make all etc-hosts
   ansible-playbook site.yml
   ansible-playbook run-server.yml
 ```

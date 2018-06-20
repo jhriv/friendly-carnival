@@ -1,0 +1,14 @@
+---
+
+- name: Install Apache
+  hosts: default,frontend
+
+  vars_files:
+    - vars.yml
+
+  roles:
+   - {
+        name: geerlingguy.apache,
+        become: true,
+        apache_vhosts: '{{ vhosts[inventory_hostname]}}'
+      }
